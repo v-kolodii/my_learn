@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+ {% block stylesheets %}
+     {{ parent() }}
+
+<style>
+    #result{
+        background-color: #1c2833;
+        color: #fff;
+        font-size: 16px;
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+    }
+</style>
+ {% endblock %}
+ {% block body %}
+     <div class="row">
+         <div class="col-4">
+             <div class="list-group" id="list-tab" role="tablist">
+                 <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list"
+                    href="#list-home" role="tab" aria-controls="home">Entries</a>
+                 <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
+                    href="#list-profile" role="tab" aria-controls="profile">Lemmas</a>
+                 {#                 <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" #}
+                 {#                    href="#list-messages" role="tab" aria-controls="messages">Messages</a> #}
+                 {#                 <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" #}
+                 {#                    href="#list-settings" role="tab" aria-controls="settings">Settings</a> #}
+             </div>
+         </div>
+         <div class="col-8">
+             <div class="tab-content" id="nav-tabContent">
+                 <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                      <span class="small">
+                       TIP: Entries ONLY works for dictionary headwords. You may need to use the Lemmas endpoint first to link an inflected form back to its headword (e.g., pixels --> pixel)
+                      </span>
+                     <form class="form" name="entries" action="{{ entries_endpoint }}">
+                         <div class="form-group row mb-2 mt-2">
+                             <label for="entries-word" class="col-sm-3">Enter a word to test the API</label>
+                             <input type="text" class="form-control col-sm-3" id="entries-word" name="form-input" value="">
+                             <button type="submit" class="send-button btn btn-primary col-sm-1 ml-1 mb-2">Send</button>
+                         </div>
+                     </form>
+                 </div>
+                 <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                      <span class="small">
+                          Use this to check if a word exists in the dictionary, or what 'root' form it links to (e.g., swimming > swim)
+                {#          Implementation notes #}
+                          {#      /api/v2/lemmas/{source_lang}/{word_id}: #}
+                          {#      Use this to check if a word exists in the dictionary, or what 'root' form it links to (e.g., swimming > swim). #}
+                          {#          The response tells you the possible lemmas #}
+                          {#      for a given inflected word. This can then be combined with other endpoints to retrieve more information. #}
+                          {#      The results can be filtered by lexicalCategories and/or grammaticalFeatures. Filters can be combined. #}
+                          {#      Combining different filters will build a query using 'AND' operators, while if a filter contains more than one value #}
+                          {#          it will build a query using 'OR' operators. For example, a combination of filters like #}
+                          {#          '?grammaticalFeatures=singular&lexicalCategory=noun,verb' will return entries which match the query #}
+                          {#          ('noun' OR 'verb') AND 'singular'. #}
+                       </span>
+                     <form class="form" name="lemmas" action="{{ lemmas_endpoint }}">
+                         <div class="form-group row mb-2 mt-2">
+                             <label for="lemmas-word" class="col-sm-3">Enter a word to test the API</label>
+                             <input type="text" class="form-control col-sm-3" id="lemmas-word" name="form-input" value="">
+                             <button type="submit" class="send-button btn btn-primary col-sm-1 ml-1 mb-2">Send</button>
+                         </div>
+                     </form>
+                 </div>
+                 {#                 <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list"> #}
+                 {#                     .asfgv.. #}
+                 {#                 </div> #}
+                 {#                 <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list"> #}
+                 {#                     ..safv. #}
+                 {#                 </div> #}
+             </div>
+         </div>
+
+     </div>
+     <div class="result-wrapper mt-3 row">
+         <div class="col-4">
+             <pre id="result"></pre>
+         </div>
+     </div>
+ {% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script>console.log('Helleo');
+
+        const buttons = document.querySelectorAll('.send-button');
+
+        buttons.forEach(el => el.addEventListener('click', eventHandler));
+
+        function eventHandler(e) {
+            e.preventDefault();
+            let form = $(e.target).closest('form');
+            let url = form.attr('action');
+            let data = new FormData(form[0])
+
+            fetch(url, {
+                method: 'POST',
+                body: data,
+            })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    document.getElementById("result").innerHTML = JSON.stringify(data, undefined, 2);
+                });
+        }
+    </script>
+{% endblock scripts %}
