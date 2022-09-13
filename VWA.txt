@@ -1,0 +1,9 @@
+1. SQL- injection:
+- User Id  select - put in form '1 or '1' = '1
+-as result you can see several users from DB
+
+2. SQL- injection:
+- User Id  select - put in form '1 or '1' = '1 UNION SELECT user, password from users#
+-as result you can see several users from DB and their hash passwords
+
+Don't use data from UI in select query. You can use ORM as variant.
