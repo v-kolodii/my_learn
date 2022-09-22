@@ -1,0 +1,5 @@
+parameters:
+  oxford_client_id: '%env(OXFORD_CLIENT_ID)%'
+  oxford_endpoint_url: '%env(OXFORD_ENDPOINT_URL)%'
+  oxford_secret_key: '%env(OXFORD_SECRET_KEY)%'
+  upload_directory: '%kernel.project_dir%/public/uploads/files'

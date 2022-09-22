@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+ {% block body %}
+  <h1>Statistic</h1>
+
+{{ dump(textEntity) }}
+
+  <ul>
+   <li><a href="{{ path('export', {'type': 'csv', 'id': textEntity.id}) }}">Export to CSV</a></li>
+   <li><a href="{{ path('export', {'type': 'xml', 'id': textEntity.id}) }}">Export to XML</a></li>
+   <li><a href="{{ path('export', {'type': 'xlsx', 'id': textEntity.id}) }}">Export to XLSX</a></li>
+  </ul>
+ {% endblock %}
