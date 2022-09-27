@@ -4,10 +4,13 @@ namespace App\Controller;
 
 use App\Entity\TextEntity;
 use App\Entity\TextEntityDTO;
+use App\Export\ExportFactory;
 use App\Form\TextEntityType;
 use App\Handler\HandlerFactory;
+use App\Repository\TextEntityRepository;
 use App\Service\StatisticService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,11 +80,20 @@ class DefaultController extends AbstractController
      * @param Request $request
      * @param string $type
      * @return Response
+     * @throws \Exception
      */
-    public function export(Request $request, string $type): Response
+    public function export(Request $request, string $type, TextEntityRepository $repository, LoggerInterface $logger): Response
     {
         $id = $request->query->get('id');
-        dd([$type, $id]);
+        try {
+            if ($id && $textEntity = $repository->findOneBy(['id' => $id])) {
+            $exporter = ExportFactory::createExport($type);
+            return $exporter->export($textEntity);
+            }
+        } catch (\Exception $e){
+          $logger->error($e->getMessage());
+        }
+        return  $this->redirectToRoute('new');
     }
 
     /**
