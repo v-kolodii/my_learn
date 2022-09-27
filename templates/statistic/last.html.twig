@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+ {% block body %}
+  <h1>Last Statistics</h1>
+
+{{ dump(textEntities) }}
+
+  <ul>
+   <li><a href="{{ path('new') }}">Add new text</a></li>
+  </ul>
+ {% endblock %}
